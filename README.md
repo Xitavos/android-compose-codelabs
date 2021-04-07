@@ -7,7 +7,7 @@ For more information about Jetpack Compose, please [read the documentation](http
 
 ## 💻 Requirements
 
-[Android Studio 4.2 Canary](https://developer.android.com/studio/preview/index.html) or newer.
+The latest [Canary version of Android Studio](https://developer.android.com/studio/preview/index.html).
 
 ## 🧬 Codelabs
 
@@ -34,6 +34,10 @@ application’s colors, typography and shapes and support light and dark themes.
 
 Understand how Jetpack Compose and View-based UIs can co-exist and interact, making it easy to
 adopt Compose at your own pace.
+
+### [Animation codelab](https://developer.android.com/codelabs/jetpack-compose-animation)
+
+Learn how to use Jetpack Compose Animation APIs.
 
 ## License
 

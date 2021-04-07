@@ -21,17 +21,18 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.preferredHeight
-import androidx.compose.foundation.layout.preferredHeightIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.AmbientContentAlpha
 import androidx.compose.material.Card
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Divider
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.ListItem
+import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
@@ -41,13 +42,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Palette
 import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Providers
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -112,7 +115,7 @@ fun Header(
     Surface(
         color = MaterialTheme.colors.onSurface.copy(alpha = 0.1f),
         contentColor = MaterialTheme.colors.primary,
-        modifier = modifier
+        modifier = modifier.semantics { heading() }
     ) {
         Text(
             text = text,
@@ -136,14 +139,14 @@ fun FeaturedPost(
                 .clickable { /* onClick */ }
         ) {
             Image(
-                bitmap = imageResource(post.imageId),
+                painter = painterResource(post.imageId),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .preferredHeightIn(min = 180.dp)
+                    .heightIn(min = 180.dp)
                     .fillMaxWidth()
             )
-            Spacer(Modifier.preferredHeight(16.dp))
+            Spacer(Modifier.height(16.dp))
 
             val padding = Modifier.padding(horizontal = 16.dp)
             Text(
@@ -157,7 +160,7 @@ fun FeaturedPost(
                 modifier = padding
             )
             PostMetadata(post, padding)
-            Spacer(Modifier.preferredHeight(16.dp))
+            Spacer(Modifier.height(16.dp))
         }
     }
 }
@@ -186,7 +189,7 @@ private fun PostMetadata(
             }
         }
     }
-    Providers(AmbientContentAlpha provides ContentAlpha.medium) {
+    CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
         Text(
             text = text,
             style = MaterialTheme.typography.body2,
@@ -195,6 +198,7 @@ private fun PostMetadata(
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PostItem(
     post: Post,
@@ -206,7 +210,7 @@ fun PostItem(
             .padding(vertical = 8.dp),
         icon = {
             Image(
-                bitmap = imageResource(post.imageThumbId),
+                painter = painterResource(post.imageThumbId),
                 contentDescription = null,
                 modifier = Modifier.clip(shape = MaterialTheme.shapes.small)
             )

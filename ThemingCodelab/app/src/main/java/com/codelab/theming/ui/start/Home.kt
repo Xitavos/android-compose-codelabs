@@ -22,13 +22,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.preferredHeight
-import androidx.compose.foundation.layout.preferredHeightIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Card
 import androidx.compose.material.Divider
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.ListItem
 import androidx.compose.material.MaterialTheme
@@ -43,8 +44,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -109,6 +112,7 @@ fun Header(
         modifier = modifier
             .fillMaxWidth()
             .background(Color.LightGray)
+            .semantics { heading() }
             .padding(horizontal = 16.dp, vertical = 8.dp)
     )
 }
@@ -125,14 +129,14 @@ fun FeaturedPost(
                 .clickable { /* onClick */ }
         ) {
             Image(
-                bitmap = imageResource(post.imageId),
+                painter = painterResource(post.imageId),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .preferredHeightIn(min = 180.dp)
+                    .heightIn(min = 180.dp)
                     .fillMaxWidth()
             )
-            Spacer(Modifier.preferredHeight(16.dp))
+            Spacer(Modifier.height(16.dp))
 
             val padding = Modifier.padding(horizontal = 16.dp)
             Text(
@@ -144,7 +148,7 @@ fun FeaturedPost(
                 modifier = padding
             )
             PostMetadata(post, padding)
-            Spacer(Modifier.preferredHeight(16.dp))
+            Spacer(Modifier.height(16.dp))
         }
     }
 }
@@ -174,6 +178,7 @@ private fun PostMetadata(
     )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PostItem(
     post: Post,
@@ -185,7 +190,7 @@ fun PostItem(
             .padding(vertical = 8.dp),
         icon = {
             Image(
-                bitmap = imageResource(post.imageThumbId),
+                painter = painterResource(post.imageThumbId),
                 contentDescription = null
             )
         },
