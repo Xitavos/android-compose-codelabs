@@ -34,7 +34,8 @@ import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.savedinstancestate.savedInstanceState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,14 +44,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.codelabs.state.R
 
-
 // An example of a stateful and stateless composable using unidirectional data flow. In this codelab
 // you will learn how to build composables following these patterns and how it helps you structure
 // your code.
 
 @Composable
 fun ExpandingCard(title: String, body: String, modifier: Modifier = Modifier) {
-    var expanded by savedInstanceState { false }
+    var expanded by rememberSaveable { mutableStateOf(false) }
     ExpandingCard(
         title = title,
         body = body,

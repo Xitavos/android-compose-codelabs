@@ -29,15 +29,15 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayout
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSizeConstraints
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.preferredHeight
-import androidx.compose.foundation.layout.preferredWidth
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -45,13 +45,16 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
@@ -79,9 +82,9 @@ fun AnimatedIconRow(
 ) {
     // remember these specs so they don't restart if recomposing during the animation
     // this is required since TweenSpec restarts on interruption
-    val enter = remember { fadeIn(animSpec = TweenSpec(300, easing = FastOutLinearInEasing)) }
-    val exit = remember { fadeOut(animSpec = TweenSpec(100, easing = FastOutSlowInEasing)) }
-    Box(modifier.defaultMinSizeConstraints(minHeight = 16.dp)) {
+    val enter = remember { fadeIn(animationSpec = TweenSpec(300, easing = FastOutLinearInEasing)) }
+    val exit = remember { fadeOut(animationSpec = TweenSpec(100, easing = FastOutSlowInEasing)) }
+    Box(modifier.defaultMinSize(minHeight = 16.dp)) {
         AnimatedVisibility(
             visible = visible,
             initiallyVisible = initialVisibility,
@@ -126,7 +129,6 @@ fun IconRow(
  * @param isSelected (state) selection state
  * @param modifier modifier for this element
  */
-@OptIn(ExperimentalLayout::class)
 @Composable
 private fun SelectableIconButton(
     icon: ImageVector,
@@ -155,12 +157,12 @@ private fun SelectableIconButton(
                 Box(
                     Modifier
                         .padding(top = 3.dp)
-                        .preferredWidth(icon.defaultWidth)
-                        .preferredHeight(1.dp)
+                        .width(icon.defaultWidth)
+                        .height(1.dp)
                         .background(tint)
                 )
             } else {
-                Spacer(modifier = Modifier.preferredHeight(4.dp))
+                Spacer(modifier = Modifier.height(4.dp))
             }
         }
     }
@@ -187,7 +189,7 @@ fun TodoItemInputBackground(
         shape = RectangleShape,
     ) {
         Row(
-            modifier = modifier.animateContentSize(animSpec = TweenSpec(300)),
+            modifier = modifier.animateContentSize(animationSpec = TweenSpec(300)),
             content = content
         )
     }
@@ -201,26 +203,28 @@ fun TodoItemInputBackground(
  * @param modifier the modifier for this element
  * @param onImeAction (event) notify caller of [ImeAction.Done] events
  */
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun TodoInputText(
     text: String,
     onTextChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     onImeAction: () -> Unit = {}
-) = TextField(
-    value = text,
-    onValueChange = onTextChange,
-    backgroundColor = Color.Transparent,
-    maxLines = 1,
-    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-    onImeActionPerformed = { action, softKeyboardController ->
-        if (action == ImeAction.Done) {
+) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    TextField(
+        value = text,
+        onValueChange = onTextChange,
+        colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.Transparent),
+        maxLines = 1,
+        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+        keyboardActions = KeyboardActions(onDone = {
             onImeAction()
-            softKeyboardController?.hideSoftwareKeyboard()
-        }
-    },
-    modifier = modifier
-)
+            keyboardController?.hideSoftwareKeyboard()
+        }),
+        modifier = modifier
+    )
+}
 
 /**
  * Styled button for [TodoScreen]

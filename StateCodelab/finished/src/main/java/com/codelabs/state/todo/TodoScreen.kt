@@ -20,7 +20,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayout
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -28,21 +27,20 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.AmbientContentColor
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
+import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.savedinstancestate.savedInstanceState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -135,7 +133,6 @@ fun TodoScreen(
  * @param onEditDone (event) request edit mode completion for this item
  * @param onRemoveItem (event) request this item be removed
  */
-@OptIn(ExperimentalLayout::class)
 @Composable
 fun TodoItemInlineEditor(
     item: TodoItem,
@@ -182,7 +179,7 @@ fun TodoItemInlineEditor(
  */
 @Composable
 fun TodoItemEntryInput(onItemComplete: (TodoItem) -> Unit, buttonText: String = "Add") {
-    val (text, onTextChange) = savedInstanceState { "" }
+    val (text, onTextChange) = rememberSaveable { mutableStateOf("") }
     val (icon, onIconChange) = remember { mutableStateOf(TodoIcon.Default) }
 
     val submit = {
@@ -216,7 +213,6 @@ fun TodoItemEntryInput(onItemComplete: (TodoItem) -> Unit, buttonText: String = 
  * @param iconsVisible (state) display icons or hide them
  * @param buttonSlot (slot) slot for providing buttons next to the text
  */
-@OptIn(ExperimentalLayout::class)
 @Composable
 fun TodoItemInput(
     text: String,
@@ -225,14 +221,14 @@ fun TodoItemInput(
     onIconChange: (TodoIcon) -> Unit,
     submit: () -> Unit,
     iconsVisible: Boolean,
-    buttonSlot: @Composable() () -> Unit,
+    buttonSlot: @Composable () -> Unit,
 ) {
     Column {
         Row(
             Modifier
                 .padding(horizontal = 16.dp)
                 .padding(top = 16.dp)
-                .preferredHeight(IntrinsicSize.Min)
+                .height(IntrinsicSize.Min)
         ) {
             TodoInputText(
                 text = text,
@@ -279,7 +275,7 @@ fun TodoRow(
         Text(todo.task)
         Icon(
             imageVector = todo.icon.imageVector,
-            tint = AmbientContentColor.current.copy(alpha = iconAlpha),
+            tint = LocalContentColor.current.copy(alpha = iconAlpha),
             contentDescription = stringResource(id = todo.icon.contentDescription)
         )
     }
