@@ -65,6 +65,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -98,6 +99,7 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.consumePositionChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.input.pointer.util.VelocityTracker
@@ -378,14 +380,15 @@ private fun Header(
  * @param expanded Whether the row should be shown expanded with the topic body.
  * @param onClick Called when the row is clicked.
  */
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun TopicRow(topic: String, expanded: Boolean, onClick: () -> Unit) {
     TopicRowSpacer(visible = expanded)
     Surface(
         modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
-        elevation = 2.dp
+            .fillMaxWidth(),
+        elevation = 2.dp,
+        onClick = onClick
     ) {
         // TODO 3: Animate the size change of the content.
         Column(
@@ -682,12 +685,15 @@ private fun Modifier.swipeToDismiss(
                 // Wait for drag events.
                 awaitPointerEventScope {
                     horizontalDrag(pointerId) { change ->
+                        // TODO 6-3: Apply the drag change to the Animatable offset.
+                        val horizontalDragOffset = offsetX.value + change.positionChange().x
                         launch {
-                            // TODO 6-3: Apply the drag change to the Animatable offset.
-                            offsetX.snapTo(offsetX.value + change.positionChange().x)
+                            offsetX.snapTo(horizontalDragOffset)
                         }
                         // Record the velocity of the drag.
                         velocityTracker.addPosition(change.uptimeMillis, change.position)
+                        // Consume the gesture event, not passed to external
+                        change.consumePositionChange()
                     }
                 }
                 // Dragging finished. Calculate the velocity of the fling.
